@@ -1,0 +1,15 @@
+version: '3.2'
+services:
+  mongodb:
+    container_name: mongo-example
+    environment:
+      - MONGO_INITDB_DATABASE=example
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=ASjkjasd13123
+    image: 'mongo:latest'
+    ports:
+      - '27017:27017'
+    restart: always
+    volumes:
+      - './data:/data/db'
+      - './init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js'
