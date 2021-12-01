@@ -1,7 +1,7 @@
 PROJECT_NAME ?= api-example
 
 build: ## Build main server
-	@go build -ldflags="-X main.APIVersion=${API_VERSION}" -o bin/${PROJECT_NAME} -v
+	@go build -o bin/${PROJECT_NAME}
 
 watch: ## Start compile deamon
 	@CompileDaemon -build="make" -command="./bin/api-example" \
