@@ -39,6 +39,13 @@ func newRouter(s service.Service) *router {
 }
 
 func (r *router) initRoutes() *router {
+	r.engine.GET("/", r.greet)
+
+	api := r.engine.Group("/api")
+	// routes under /api will be protected by token auth
+	api.Use(withError(middlewareTokenAuth(r.Service.TokenService())))
+
+	api.GET("/", r.greet)
 	return r
 }
 
@@ -50,4 +57,8 @@ func (r *router) initCors() *router {
 	r.engine.Use(cors.New(conf))
 
 	return r
+}
+
+func (r *router) greet(c *gin.Context) {
+	c.JSON(200, gin.H{"greet": "Hello World"})
 }

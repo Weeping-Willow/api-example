@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/Weeping-Willow/api-example/config"
-	"github.com/Weeping-Willow/api-example/models"
+	"github.com/Weeping-Willow/api-example/repositories"
 	"github.com/Weeping-Willow/api-example/router"
 	"github.com/Weeping-Willow/api-example/service"
 	"github.com/rs/zerolog/log"
@@ -24,12 +24,12 @@ func run() error {
 		return err
 	}
 
-	client, err := models.GetConnection(cfg.DatabaseUrl)
+	client, err := repositories.GetConnection(cfg.DatabaseUrl)
 	if err != nil {
 		return err
 	}
 	defer client.Disconnect(context.TODO())
-	repo := models.NewRepository(client.Database(cfg.DatabaseName))
+	repo := repositories.NewRepository(client.Database(cfg.DatabaseName))
 
 	s := service.NewService(&service.Options{
 		Repo:   repo,

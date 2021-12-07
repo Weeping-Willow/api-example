@@ -2,25 +2,33 @@ package service
 
 import (
 	"github.com/Weeping-Willow/api-example/config"
-	"github.com/Weeping-Willow/api-example/models"
+	"github.com/Weeping-Willow/api-example/repositories"
 )
 
 type Service interface {
 	GetConfig() *config.Config
+	TokenService() TokenService
 }
 
 type Options struct {
-	Repo   models.Repository
+	Repo   repositories.Repository
 	Config *config.Config
 }
 
 type service struct {
-	Options *Options
+	Options       *Options
+	tokensService TokenService
+}
+
+type commonService struct {
+	Repo   repositories.Repository
+	Config *config.Config
 }
 
 func NewService(o *Options) Service {
 	return &service{
-		Options: o,
+		Options:       o,
+		tokensService: newTokenService(o),
 	}
 }
 
