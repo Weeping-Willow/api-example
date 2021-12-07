@@ -11,7 +11,7 @@ type Service interface {
 }
 
 type Options struct {
-	Repo   repositories.Repository
+	Repo   repositories.MongoRepository
 	Config *config.Config
 }
 
@@ -21,7 +21,7 @@ type service struct {
 }
 
 type commonService struct {
-	Repo   repositories.Repository
+	Repo   repositories.MongoRepository
 	Config *config.Config
 }
 

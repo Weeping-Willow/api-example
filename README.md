@@ -3,6 +3,7 @@
 Creating an example api using golang
 
 Note: .env is included in the repo and contains the default password auth details for development mongo instance incase, so this should only be used for dev or testing 
+
 ## Installation
 
 

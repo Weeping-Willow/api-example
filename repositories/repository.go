@@ -4,18 +4,26 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Weeping-Willow/api-example/models"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type Repository interface {
+const CollectionNameScores = "scores"
+
+type MongoRepository interface {
+	InsertScore(score *models.DocumentScores) (*mongo.InsertOneResult, error)
+	GetScores(filters primitive.M, opts ...*options.FindOptions) ([]*models.DocumentScores, error)
+	UpdateScore(filter primitive.M, score *models.DocumentScores) (*mongo.UpdateResult, error)
+	DeleteAll(collectionName string) (*mongo.DeleteResult, error)
+	Collection(name string) *mongo.Collection
 }
 
 type repo struct {
 	db *mongo.Database
 }
-
-const CollectionNameScores = "scores"
 
 func GetConnection(dbHost string) (*mongo.Client, error) {
 	clientOptions := options.Client().ApplyURI(dbHost)
@@ -31,12 +39,18 @@ func GetConnection(dbHost string) (*mongo.Client, error) {
 	return client, nil
 }
 
-func NewRepository(database *mongo.Database) Repository {
+func NewRepository(database *mongo.Database) MongoRepository {
 	return &repo{
 		db: database,
 	}
 }
 
-func (r *repo) collection(name string) *mongo.Collection {
+func (r *repo) Collection(name string) *mongo.Collection {
 	return r.db.Collection(name)
+}
+
+func (r *repo) DeleteAll(collectionName string) (*mongo.DeleteResult, error) {
+	collection := r.Collection(collectionName)
+	res, err := collection.DeleteMany(context.TODO(), bson.M{})
+	return res, err
 }
