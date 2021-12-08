@@ -22,3 +22,8 @@ type Meta struct {
 	PerPage     int `json:"per_page"`
 	NextPage    int `json:"next_page"`
 }
+
+type RequestPostScore struct {
+	Name  string `json:"name" binding:"required"`
+	Score int    `json:"score" binding:"required,min=0"`
+}

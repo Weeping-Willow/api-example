@@ -19,6 +19,7 @@ type MongoRepository interface {
 	UpdateScore(filter primitive.M, score *models.DocumentScores) (*mongo.UpdateResult, error)
 	DeleteAll(collectionName string) (*mongo.DeleteResult, error)
 	Collection(name string) *mongo.Collection
+	GetScoreRanks(scores map[string]int, opts ...*options.FindOptions) (map[string]int, error)
 }
 
 type repo struct {

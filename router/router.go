@@ -46,6 +46,7 @@ func (r *router) initRoutes() *router {
 	api.Use(withError(middlewareTokenAuth(r.Service.TokenService())))
 
 	api.GET("/", r.greet)
+	api.POST("/score", withError(controllerPostScore(r.Service.ScoreService())))
 	return r
 }
 

@@ -7,12 +7,12 @@ type TokenService interface {
 }
 
 type tokenService struct {
-	commonService
+	commonServices
 }
 
 func newTokenService(opts *Options) *tokenService {
 	return &tokenService{
-		commonService: commonService{Repo: opts.Repo, Config: opts.Config},
+		commonServices: commonServices{Repo: opts.Repo, Config: opts.Config},
 	}
 }
 

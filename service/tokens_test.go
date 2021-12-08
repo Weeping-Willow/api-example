@@ -31,7 +31,7 @@ func Test_tokenService_Check(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tr := &tokenService{
-				commonService: commonService{},
+				commonServices: commonServices{},
 			}
 
 			err := tr.Check(tt.token)
