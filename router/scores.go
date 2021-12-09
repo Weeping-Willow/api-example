@@ -22,3 +22,20 @@ func controllerPostScore(score service.ScoreService) HandlerE {
 		return nil
 	}
 }
+
+func controllerGetScores(score service.ScoreService) HandlerE {
+	return func(c *gin.Context) error {
+		var req models.RequestGetScores
+		if err := c.ShouldBindQuery(&req); err != nil {
+			return newErrorBadRequest(err)
+		}
+
+		score, err := score.GetScores(&req)
+		if err != nil {
+			return err
+		}
+
+		c.JSON(200, score)
+		return nil
+	}
+}

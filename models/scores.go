@@ -12,7 +12,7 @@ type DocumentScores struct {
 type ScoreResponse struct {
 	Results  []*DocumentScores `json:"results"`
 	AroundMe []*DocumentScores `json:"aroundMe,omitempty"`
-	Meta     Meta              `json:"meta"`
+	Meta     *Meta             `json:"meta"`
 }
 
 type Meta struct {
@@ -26,4 +26,10 @@ type Meta struct {
 type RequestPostScore struct {
 	Name  string `json:"name" binding:"required"`
 	Score int    `json:"score" binding:"required,min=0,max=500"`
+}
+
+type RequestGetScores struct {
+	PageNumber int    `form:"page"`
+	PageSize   int    `form:"page[size]"`
+	Name       string `form:"name"`
 }

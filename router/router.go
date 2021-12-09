@@ -47,6 +47,7 @@ func (r *router) initRoutes() *router {
 
 	api.GET("/", r.greet)
 	api.POST("/score", withError(controllerPostScore(r.Service.ScoreService())))
+	api.GET("/score", withError(controllerGetScores(r.Service.ScoreService())))
 	return r
 }
 

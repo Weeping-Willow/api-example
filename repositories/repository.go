@@ -20,6 +20,7 @@ type MongoRepository interface {
 	DeleteAll(collectionName string) (*mongo.DeleteResult, error)
 	Collection(name string) *mongo.Collection
 	GetScoreRanks(scores map[string]int, opts ...*options.FindOptions) (map[string]int, error)
+	GetScoreAndNeighbors(name string, opts ...*options.FindOptions) ([]*models.DocumentScores, error)
 }
 
 type repo struct {
