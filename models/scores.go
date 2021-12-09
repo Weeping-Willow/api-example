@@ -3,7 +3,7 @@ package models
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type DocumentScores struct {
-	Id    primitive.ObjectID `json:"_" bson:"_id,omitempty"`
+	Id    primitive.ObjectID `json:"-" bson:"_id,omitempty"`
 	Score int                `json:"score" bson:"score"`
 	Name  string             `json:"name" bson:"name"`
 	Rank  int                `json:"rank" bson:"-"`
@@ -25,5 +25,5 @@ type Meta struct {
 
 type RequestPostScore struct {
 	Name  string `json:"name" binding:"required"`
-	Score int    `json:"score" binding:"required,min=0"`
+	Score int    `json:"score" binding:"required,min=0,max=500"`
 }

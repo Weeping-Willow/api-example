@@ -10,7 +10,7 @@ func controllerPostScore(score service.ScoreService) HandlerE {
 	return func(c *gin.Context) error {
 		var req *models.RequestPostScore
 		if err := c.ShouldBindJSON(&req); err != nil {
-			return err
+			return newErrorBadRequest(err)
 		}
 
 		score, err := score.PostScore(req)

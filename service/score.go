@@ -81,7 +81,7 @@ func (s *scoreService) handlePostedScore(postedScore *models.RequestPostScore, s
 }
 
 func (s *scoreService) handleExistingScoreUpdate(score *models.DocumentScores, newScore int) (*models.DocumentScores, error) {
-	if score.Score > newScore {
+	if score.Score >= newScore {
 		return nil, fmt.Errorf(ErrScoreIsSmaller, newScore, score.Score)
 	}
 	score.Score = newScore

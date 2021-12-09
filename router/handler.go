@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 /*
@@ -28,7 +29,8 @@ func withError(h HandlerE) gin.HandlerFunc {
 				return
 			}
 		}
-		c.JSON(http.StatusInternalServerError, errorRespose{"unexpected error"})
+		log.Err(err)
+		c.JSON(http.StatusInternalServerError, errorRespose{Err: err.Error()})
 	}
 }
 
@@ -49,5 +51,25 @@ func newErrorNotAuthorized() *errorRespose {
 }
 
 func (e *errorRespose) Error() string {
+	return e.Err
+}
+
+type errorBadRequest struct {
+	Err string `json:"error"`
+}
+
+func (e *errorBadRequest) handleError(ctx *gin.Context) bool {
+	ctx.JSON(
+		http.StatusBadRequest,
+		newErrorBadRequest(e),
+	)
+	return true
+}
+
+func newErrorBadRequest(err error) *errorBadRequest {
+	return &errorBadRequest{Err: err.Error()}
+}
+
+func (e *errorBadRequest) Error() string {
 	return e.Err
 }
