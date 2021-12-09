@@ -28,57 +28,19 @@ func (s *service) ScoreService() ScoreService {
 }
 
 func (s *scoreService) PostScore(score *models.RequestPostScore) (*models.DocumentScores, error) {
-	scores, err := s.commonServices.Repo.GetScores(bson.M{"name": score.Name}, s.getDefaultOptions(1))
+	scoresFromDB, err := s.commonServices.Repo.GetScores(bson.M{"name": score.Name}, s.getDefaultOptions(1))
 	if err != nil {
 		return nil, err
 	}
 
-	//TODO: The if should be simplified in some way
-	var endScore *models.DocumentScores
-	if len(scores) > 0 {
-		endScore = scores[0]
-		if endScore.Score < score.Score {
-			return nil, fmt.Errorf("given score %d is smaller than already existing score %d", score.Score, scores[0].Score)
-		}
-		updateResult, err := s.commonServices.Repo.UpdateScore(
-			bson.M{"name": score.Name},
-			&models.DocumentScores{
-				Id:    endScore.Id,
-				Score: score.Score,
-				Name:  score.Name,
-			},
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		if updateResult.ModifiedCount == 0 {
-			return nil, ErrUpdateFailed
-		}
-	} else {
-		endScore = &models.DocumentScores{
-			Id:    primitive.NewObjectID(),
-			Score: score.Score,
-			Name:  score.Name,
-		}
-		_, err := s.Repo.InsertScore(endScore)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	// TODO refactor
-	endRanks, err := s.Repo.GetScoreRanks(s.getEmptyRankMap(endScore), s.getDefaultOptions(0))
+	finalScore, err := s.handlePostedScore(score, scoresFromDB)
 	if err != nil {
 		return nil, err
 	}
-	val, ok := endRanks[endScore.Name]
-	if !ok {
-		return nil, ErrRankingNotFound
-	}
-	endScore.Rank = val
 
-	return endScore, err
+	scoresWithRanks, err := s.getRanksForEachScore(finalScore)
+
+	return scoresWithRanks[0], err
 }
 
 func (s *scoreService) getDefaultOptions(limit int64) *options.FindOptions {
@@ -98,4 +60,64 @@ func (s *scoreService) getEmptyRankMap(scores ...*models.DocumentScores) map[str
 	}
 
 	return rankings
+}
+
+func (s *scoreService) handlePostedScore(postedScore *models.RequestPostScore, scoresFromDB []*models.DocumentScores) (*models.DocumentScores, error) {
+	if len(scoresFromDB) > 0 {
+		return s.handleExistingScoreUpdate(scoresFromDB[0], postedScore.Score)
+	}
+
+	endScore := &models.DocumentScores{
+		Id:    primitive.NewObjectID(),
+		Score: postedScore.Score,
+		Name:  postedScore.Name,
+	}
+	_, err := s.Repo.InsertScore(endScore)
+	if err != nil {
+		return nil, err
+	}
+
+	return endScore, nil
+}
+
+func (s *scoreService) handleExistingScoreUpdate(score *models.DocumentScores, newScore int) (*models.DocumentScores, error) {
+	if score.Score < newScore {
+		return nil, fmt.Errorf("given score %d is smaller than the already existing score %d", newScore, score.Score)
+	}
+	score.Score = newScore
+
+	updateResult, err := s.commonServices.Repo.UpdateScore(
+		bson.M{"name": score.Name},
+		score,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if updateResult.ModifiedCount == 0 {
+		return nil, ErrUpdateFailed
+	}
+
+	return score, nil
+}
+
+func (s *scoreService) getRanksForEachScore(scores ...*models.DocumentScores) ([]*models.DocumentScores, error) {
+	if len(scores) == 0 {
+		return nil, nil
+	}
+
+	endRanks, err := s.Repo.GetScoreRanks(s.getEmptyRankMap(scores...), s.getDefaultOptions(0))
+	if err != nil {
+		return nil, err
+	}
+
+	for i, score := range scores {
+		val, ok := endRanks[score.Name]
+		if !ok {
+			return nil, ErrRankingNotFound
+		}
+		scores[i].Rank = val
+	}
+
+	return scores, nil
 }
