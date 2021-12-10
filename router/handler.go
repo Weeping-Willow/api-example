@@ -41,12 +41,13 @@ type errorRespose struct {
 func (e *errorRespose) handleError(ctx *gin.Context) bool {
 	ctx.JSON(
 		http.StatusUnauthorized,
-		newErrorNotAuthorized(),
+		newErrorNotAuthorized(ctx),
 	)
 	return true
 }
 
-func newErrorNotAuthorized() *errorRespose {
+func newErrorNotAuthorized(c *gin.Context) *errorRespose {
+	c.Abort()
 	return &errorRespose{Err: "not authorized"}
 }
 

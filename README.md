@@ -4,18 +4,20 @@ Creating an example api using golang
 
 Note: .env is included in the repo and contains the default password auth details for development mongo instance incase, so this should only be used for dev or testing 
 
-## Installation
+## Requirments
 
+- port 8080 and 27017 free
+- docker and docker compose installed 
 
 ## How To Run
-
+- run command `dokcer-compose up -d` will start api on port 8080
 ## How To Use
 
 1. set a header `Authorization` with value `Bearer complicated-token`
 
-2. by default if you lunch the api using docker it should run on port 80
+2. by default if you lunch the api using docker it should run on port 8080
 
-3. to check if you've added auth headers correctly call this route `Get /api/`
+3. to check if you've added auth headers correctly call this route `Get /api/`, if it returns 200 it's working ok, if it returns 401 the Authorization header is not set correctly
 
 ## Using the api
 

@@ -1,6 +1,8 @@
 package router
 
 import (
+	"net/http"
+
 	"github.com/Weeping-Willow/api-example/models"
 	"github.com/Weeping-Willow/api-example/service"
 	"github.com/gin-gonic/gin"
@@ -18,7 +20,7 @@ func controllerPostScore(score service.ScoreService) HandlerE {
 			return err
 		}
 
-		c.JSON(200, score)
+		c.JSON(http.StatusOK, score)
 		return nil
 	}
 }
@@ -35,7 +37,7 @@ func controllerGetScores(score service.ScoreService) HandlerE {
 			return err
 		}
 
-		c.JSON(200, score)
+		c.JSON(http.StatusOK, score)
 		return nil
 	}
 }

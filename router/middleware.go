@@ -9,11 +9,11 @@ func middlewareTokenAuth(token service.TokenService) HandlerE {
 	return func(c *gin.Context) error {
 		auth := c.GetHeader("Authorization")
 		if auth == "" {
-			return newErrorNotAuthorized()
+			return newErrorNotAuthorized(c)
 		}
 
 		if token.Check(auth) != nil {
-			return newErrorNotAuthorized()
+			return newErrorNotAuthorized(c)
 		}
 
 		c.Next()

@@ -13,3 +13,13 @@ services:
     volumes:
       - './data:/data/db'
       - './init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js'
+  backend:
+    container_name: api-example
+    build: ./
+    ports:
+      - '8080:80'
+    environment: 
+      - DATABASE_URL=mongodb://admin:ASjkjasd13123@mongodb:27017/?authSource=example
+    depends_on:
+      - mongodb
+    restart: always

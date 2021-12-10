@@ -16,7 +16,7 @@ type Config struct {
 
 func New(filenames ...string) (*Config, error) {
 	if err := godotenv.Load(filenames...); err != nil {
-		return nil, err
+		log.Err(err)
 	}
 	return &Config{
 		Port:         getEnvWithDefault("PORT", "8080"),
